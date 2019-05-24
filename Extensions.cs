@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SharpUtils
 {
@@ -9,6 +11,7 @@ namespace SharpUtils
         /// <summary>
         /// Determines whether an element is in the array
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Contains<T>(this T[] array, T item) => Array.IndexOf(array, item) != -1;
 
         /// <summary>
@@ -27,6 +30,32 @@ namespace SharpUtils
         /// <summary>
         /// Returns true if running on .NET Core, false otherwise
         /// </summary>
-        public static bool IsNetCore() => System.Type.GetType(typeof(System.Console).FullName) == null;
+        public static bool IsNetCore()
+        {
+            return System.Type.GetType(typeof(System.Console).FullName) == null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Forget(this Task task)
+        {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Forget<T>(this Task<T> task)
+        {
+        }
+
+        /// <summary>
+        /// Make sure object is never garbage collected
+        /// </summary>
+        public static void LiveForever<T>(this T obj)
+        {
+            async Task<T> RunForever()
+            {
+                await Task.Delay(-1);
+                return obj;
+            }
+            Task.Factory.StartNew(RunForever, TaskCreationOptions.LongRunning);
+        }
     }
 }

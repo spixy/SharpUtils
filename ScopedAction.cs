@@ -20,12 +20,18 @@ namespace SharpUtils
                 case FieldInfo fieldInfo:
                     oldValue = (TResult)fieldInfo.GetValue(obj);
                     fieldInfo.SetValue(obj, newValue);
-                    return () => { fieldInfo.SetValue(obj, oldValue); };
+                    return () =>
+                    {
+                        fieldInfo.SetValue(obj, oldValue);
+                    };
 
                 case PropertyInfo propertyInfo:
                     oldValue = (TResult)propertyInfo.GetMethod.Invoke(obj, Array.Empty<object>());
                     propertyInfo.SetMethod.Invoke(obj, new object[] { newValue });
-                    return () => { propertyInfo.SetMethod.Invoke(obj, new object[] { oldValue }); };
+                    return () =>
+                    {
+                        propertyInfo.SetMethod.Invoke(obj, new object[] { oldValue });
+                    };
 
                 default:
                     throw new Exception("Only property and field expressions are supported");

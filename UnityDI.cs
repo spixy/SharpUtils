@@ -155,22 +155,20 @@ namespace SharpUtils
         /// <returns>A reference to the newly created object.</returns>
         private static object CreateInstance(Type pType)
         {
-            ParameterInfo[] parameters = pType.GetConstructors()[0].GetParameters();
-            int paramsCount = parameters.Length;
+            var parameters = pType.GetConstructors()[0].GetParameters();
+            int paramCount = parameters.Length;
 
-            if (paramsCount == 0)
+            if (paramCount == 0)
             {
                 return Activator.CreateInstance(pType);
             }
-            else
+
+            var args = new object[paramCount];
+            for (int i = 0; i < paramCount; i++)
             {
-                object[] args = new object[paramsCount];
-                for (int i = 0; i < paramsCount; i++)
-                {
-                    args[i] = Get(parameters[i].ParameterType);
-                }
-                return Activator.CreateInstance(pType, args);
+                args[i] = Get(parameters[i].ParameterType);
             }
+            return Activator.CreateInstance(pType, args);
         }
     }
 }
