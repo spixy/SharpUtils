@@ -7,7 +7,7 @@ namespace SharpUtils
     /// <summary>
     /// Scoped operation
     /// </summary>
-    public class ScopedAction : IDisposable
+    public sealed class ScopedAction : IDisposable
     {
         private readonly Action _undoAction;
 

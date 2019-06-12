@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -150,7 +149,9 @@ namespace SharpUtils
             classMap.Remove(typeof(T));
         }
 
-        /// <summary>Creates an instance of the specified type using that type's default constructor.</summary>
+        /// <summary>
+        /// Creates an instance of the specified type using that type's default constructor.
+        /// </summary>
         /// <param name="pType">The type of object to create. </param>
         /// <returns>A reference to the newly created object.</returns>
         private static object CreateInstance(Type pType)

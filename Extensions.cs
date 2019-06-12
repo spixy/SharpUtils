@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -32,7 +34,32 @@ namespace SharpUtils
         /// </summary>
         public static bool IsNetCore()
         {
-            return System.Type.GetType(typeof(System.Console).FullName) == null;
+            return Type.GetType(typeof(System.Console).FullName) == null;
+        }
+
+        /// <summary>Creates a continuation that executes asynchronously when the target <see cref="Task{TResult}"></see> completes.</summary>
+        /// <param name="task">A task.</param>
+        /// <param name="continuationFunction">A function to run when the <see cref="Task{TResult}"></see> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        /// <typeparam name="TResult">The type of the result produced by this <see cref="Task{TResult}"></see>.</typeparam>
+        /// <typeparam name="TNewResult">The type of the result produced by the continuation.</typeparam>
+        /// <returns>A new continuation <see cref="Task{TResult}"></see>.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="Task{TResult}"></see> has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="continuationFunction">continuationFunction</paramref> argument is null.</exception>
+        public static Task<TNewResult> ContinueWith<TResult, TNewResult>(this Task<TResult> task, Func<TResult, TNewResult> continuationFunction)
+        {
+            return task.ContinueWith(t => continuationFunction(t.Result));
+        }
+
+        /// <summary>Creates a continuation that executes asynchronously when the target <see cref="Task{TResult}"></see> completes.</summary>
+        /// <param name="task">A task.</param>
+        /// <param name="continuationFunction">A function to run when the <see cref="Task{TResult}"></see> completes. When run, the delegate will be passed the completed task as an argument.</param>
+        /// <typeparam name="TResult">The type of the result produced by this <see cref="Task{TResult}"></see>.</typeparam>
+        /// <returns>A new continuation <see cref="Task{TResult}"></see>.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="Task{TResult}"></see> has been disposed.</exception>
+        /// <exception cref="ArgumentNullException">The <paramref name="continuationFunction">continuationFunction</paramref> argument is null.</exception>
+        public static Task ContinueWith<TResult>(this Task<TResult> task, Action<TResult> continuationFunction)
+        {
+            return task.ContinueWith(t => continuationFunction(t.Result));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -52,7 +79,7 @@ namespace SharpUtils
         {
             async Task<T> RunForever()
             {
-                await Task.Delay(-1);
+                await Task.Delay(-1).ConfigureAwait(false);
                 return obj;
             }
             Task.Factory.StartNew(RunForever, TaskCreationOptions.LongRunning);
